@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.pantallapersonalizada.navigation.AppNavigation
+import com.example.pantallapersonalizada.screens.PokemonSimpleScreen
 import com.example.pantallapersonalizada.ui.theme.PantallaPersonalizadaTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             PantallaPersonalizadaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(modifier = Modifier.fillMaxSize())
+                    //AppNavigation(modifier = Modifier.fillMaxSize())
+                    PokemonSimpleScreen()
                 }
             }
         }
