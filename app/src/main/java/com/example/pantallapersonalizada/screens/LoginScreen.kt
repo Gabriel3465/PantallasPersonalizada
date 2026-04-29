@@ -38,6 +38,31 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+
+    fun validate(): Boolean {
+        var isValid = true
+        if (email.isEmpty()) {
+            emailError = "El correo es obligatorio"
+            isValid = false
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailError = "Correo no válido"
+            isValid = false
+        } else {
+            emailError = null
+        }
+
+        if (password.isEmpty()) {
+            passwordError = "La contraseña es obligatoria"
+            isValid = false
+        } else {
+            passwordError = null
+        }
+
+        return isValid
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -55,28 +80,43 @@ fun LoginScreen(
         // Campo de correo
         CustomInput(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { 
+                email = it
+                if (emailError != null) emailError = null
+            },
             placeholder = "Correo electrónico",
             modifier = Modifier.fillMaxWidth(),
-            textStyle = MaterialTheme.typography.bodyLarge
+            textStyle = MaterialTheme.typography.bodyLarge,
+            isError = emailError != null,
+            errorMessage = emailError
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Campo de contraseña
-        PasswordInput(
+        CustomInput(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { 
+                password = it
+                if (passwordError != null) passwordError = null
+            },
             placeholder = "Contraseña",
             modifier = Modifier.fillMaxWidth(),
-            textStyle = MaterialTheme.typography.bodyLarge
+            textStyle = MaterialTheme.typography.bodyLarge,
+            visualTransformation = PasswordVisualTransformation(),
+            isError = passwordError != null,
+            errorMessage = passwordError
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Botón Iniciar sesión
         Button(
-            onClick = { onLoginClick(email, password) },
+            onClick = { 
+                if (validate()) {
+                    onLoginClick(email, password)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Iniciar sesión")
@@ -90,36 +130,6 @@ fun LoginScreen(
             Text("Ir a Registro")
         }
     }
-}
-
-@Composable
-fun PasswordInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge
-) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        textStyle = textStyle,
-        cursorBrush = SolidColor(textStyle.color),
-        visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        decorationBox = { innerTextField ->
-            Column {
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
-                    )
-                }
-                innerTextField()
-            }
-        }
-    )
 }
 
 // Vista previa

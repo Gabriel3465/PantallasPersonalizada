@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,57 +25,40 @@ fun CustomInput(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = LocalTextStyle.current
-) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        textStyle = textStyle,
-        cursorBrush = SolidColor(textStyle.color),
-        decorationBox = { innerTextField ->
-            Column {
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
-                    )
-                }
-                innerTextField()
-            }
-        }
-    )
-}
-
-
-@Composable
-fun CustomInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        textStyle = textStyle,
-        cursorBrush = SolidColor(textStyle.color),
-        visualTransformation = visualTransformation,
-        decorationBox = { innerTextField ->
-            Column {
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
-                    )
+    Column(modifier = modifier) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = textStyle,
+            cursorBrush = SolidColor(if (isError) MaterialTheme.colorScheme.error else textStyle.color),
+            visualTransformation = visualTransformation,
+            decorationBox = { innerTextField ->
+                Column {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            style = textStyle.copy(color = textStyle.color.copy(alpha = 0.5f))
+                        )
+                    }
+                    innerTextField()
                 }
-                innerTextField()
             }
+        )
+        if (isError && !errorMessage.isNullOrEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
-    )
+    }
 }
 
 @Preview(showBackground = true)
